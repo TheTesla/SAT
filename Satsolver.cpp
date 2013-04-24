@@ -153,7 +153,7 @@ void print_Counters(Sat_Instance_t Sat_Instance)
 {
     unsigned x, y;
     cout << "Positive Literale: " << endl;
-    for(x=0;x<Sat_Instance.noLiterals;x++){
+    for(x=0;x<=Sat_Instance.noLiterals;x++){
         cout << x << ": ";
         for(y=0;y<Sat_Instance.Literal[x].pos.noClauses;y++){
             cout << Sat_Instance.Literal[x].pos.inClause[y] << " ";
@@ -161,7 +161,7 @@ void print_Counters(Sat_Instance_t Sat_Instance)
         cout << endl;
     }
     cout << "Negative Literale: " << endl;
-    for(x=0;x<Sat_Instance.noLiterals;x++){
+    for(x=0;x<=Sat_Instance.noLiterals;x++){
         cout << x << ": ";
         for(y=0;y<Sat_Instance.Literal[x].neg.noClauses;y++){
             cout << Sat_Instance.Literal[x].neg.inClause[y] << " ";
@@ -396,7 +396,7 @@ unsigned Sat_min_Lit(Sat_Instance_t Sat_Instance)
     for(x=0;x<Sat_Instance.noClauses;x++){
         // Positive Literale prüfen reicht, da sonst Singe Polarity Literal -> sowieso eliminiert
         if(false==Sat_Instance.Clause[x].eliminated){
-            for(y=1;y<=Sat_Instance.Clause[x].noLiterals;y++){
+            for(y=0;y<Sat_Instance.Clause[x].noLiterals;y++){
                 if(false==Sat_Instance.Clause[x].Litdeleted[y]) return Sat_Instance.Clause[x].Literal[y];
             }
         }
