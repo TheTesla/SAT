@@ -37,6 +37,7 @@
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="Table.cpp" />
+		<Unit filename="Table.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
