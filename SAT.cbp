@@ -29,6 +29,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-Wextra" />
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
@@ -38,6 +39,8 @@
 		</Unit>
 		<Unit filename="Table.cpp" />
 		<Unit filename="Table.h" />
+		<Unit filename="booleq2cnf.cpp" />
+		<Unit filename="booleq2cnf.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
