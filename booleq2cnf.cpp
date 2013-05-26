@@ -11,6 +11,7 @@ graph::graph()
     operand2key = 0;
     Literal = 0;
     self = this;
+    cout << self << endl;
 }
 
 
@@ -21,38 +22,48 @@ graph::~graph()
 
 graph graph::operator&(graph x)
 {
-    graph gr;
-    gr.operation = AND;
-    gr.operand1 = this;
-    gr.operand2 = x.self;
-    return gr;
+    graph* gr;
+    gr = new graph;
+    gr->self = gr;
+    gr->operation = AND;
+    gr->operand1 = this->self;
+    gr->operand2 = x.self;
+    return *gr;
 }
 
 graph graph::operator|(graph x)
 {
-    graph gr;
-    gr.operation = OR;
-    gr.operand1 = this;
-    gr.operand2 = x.self;
-    return gr;
+    graph* gr;
+    graph* g;
+    gr = new graph;
+    gr->self = gr;
+    gr->operation = OR;
+    gr->operand1 = this->self;
+    gr->operand2 = x.self;
+    return *gr;
 }
 
 graph graph::operator^(graph x)
 {
-    graph gr;
-    gr.operation = XOR;
-    gr.operand1 = this;
-    gr.operand2 = x.self;
-    return gr;
+    graph* gr;
+    graph* g;
+    gr = new graph;
+    gr->self = gr;
+    gr->operation = XOR;
+    gr->operand1 = this->self;
+    gr->operand2 = x.self;
+    return *gr;
 }
 
 graph graph::operator~()
 {
-    graph gr;
-    gr.operation = NOT;
-    gr.operand1 = this;
-    gr.operand2 = NULL;
-    return gr;
+    graph* gr;
+    gr = new graph;
+    gr->self = gr;
+    gr->operation = NOT;
+    gr->operand1 = this->self;
+    gr->operand2 = NULL;
+    return *gr;
 }
 
 

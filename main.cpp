@@ -25,6 +25,7 @@ class logic_vector
         logic_vector operator| (logic_vector x);
         logic_vector operator^ (logic_vector x);
         logic_vector operator~ ();
+        logic_vector operator== (logic_vector x);
 
 };
 
@@ -47,7 +48,6 @@ logic_vector logic_vector::operator&(logic_vector x)
     unsigned i;
     for(i=0;i<gr_vec_n;i++){
         y.gr_vec[i] = gr_vec[i] & x.gr_vec[i];
-        y.gr_vec[i].self = &y.gr_vec[i]; // vmtl. aufgrund eines Compilerbugs nötig, außerhalb Funktion/Methode kein Probelm, vmtl. wird bei Zuweisung Quellobjekt gelöscht
     }
     return y;
 }
@@ -58,7 +58,6 @@ logic_vector logic_vector::operator|(logic_vector x)
     unsigned i;
     for(i=0;i<gr_vec_n;i++){
         y.gr_vec[i] = gr_vec[i] | x.gr_vec[i];
-        y.gr_vec[i].self = &y.gr_vec[i]; // vmtl. aufgrund eines Compilerbugs nötig, außerhalb Funktion/Methode kein Probelm, vmtl. wird bei Zuweisung Quellobjekt gelöscht
     }
     return y;
 }
@@ -69,7 +68,6 @@ logic_vector logic_vector::operator^(logic_vector x)
     unsigned i;
     for(i=0;i<gr_vec_n;i++){
         y.gr_vec[i] = gr_vec[i] ^ x.gr_vec[i];
-        y.gr_vec[i].self = &y.gr_vec[i]; // vmtl. aufgrund eines Compilerbugs nötig, außerhalb Funktion/Methode kein Probelm, vmtl. wird bei Zuweisung Quellobjekt gelöscht
     }
     return y;
 }
@@ -80,9 +78,40 @@ logic_vector logic_vector::operator~()
     unsigned i;
     for(i=0;i<gr_vec_n;i++){
         y.gr_vec[i] = ~gr_vec[i];
-        y.gr_vec[i].self = &y.gr_vec[i]; // vmtl. aufgrund eines Compilerbugs nötig, außerhalb Funktion/Methode kein Probelm, vmtl. wird bei Zuweisung Quellobjekt gelöscht
     }
     return y;
+}
+
+logic_vector logic_vector::operator==(logic_vector x)
+{
+    logic_vector y(1);
+    logic_vector tmp(gr_vec_n);
+    unsigned i;
+    tmp.gr_vec[0] = ~(gr_vec[0] ^ x.gr_vec[0]);
+
+    for(i=1;i<gr_vec_n;i++){
+        tmp.gr_vec[i] = tmp.gr_vec[i-1] & ~(gr_vec[i] ^ x.gr_vec[i]);
+    }
+
+    y.gr_vec[0] = tmp.gr_vec[gr_vec_n-1];
+    return y;
+}
+
+
+struct node
+{
+    node* prev_node;
+};
+
+node addnode(node n)
+{
+    node* n1;
+    node* n2;
+    n1 = new node;
+    n2 = new node;
+    *n2 = n;
+    n1->prev_node = n2;
+    return *n1;
 }
 
 int main()
@@ -94,20 +123,32 @@ int main()
     graph g1, g3, g4, g2;
     graph g5, g6, g7, g;
 
-    logic_vector lv1(2), lv2(2), lv3(2), lv4(2);
+
+    node n1,n2,n3;
+
+    n1.prev_node = NULL;
+    n2 = addnode(n1);
+    n3 = addnode(n2);
+    cout << n3.prev_node << " " << n3.prev_node->prev_node << " " << n3.prev_node->prev_node->prev_node << endl;
+
+
+
+    logic_vector lv1(2), lv2(2), lv3(1), lv4(1), lv5(1);
 
     vector<operation_t> oplist;
 
 
-    lv3 = lv2 & ~lv1;
+    lv3 = ~(lv2 & lv1);
 
-    lv4 = lv3 ^ lv3;
+    lv4 = lv1 == lv2;
+    cout << lv4.gr_vec_n << " " << lv4.gr_vec_n << endl;
+    lv5 = lv4 == lv4;
+    //lv4 = lv3;
 
-    g6 = lv4.gr_vec[0];
-    g5 = lv4.gr_vec[1];
+    g7 = lv4.gr_vec[0] & lv5.gr_vec[0];
 
-    g7 = g5 & g6;
 
+    //g7 = g1 & g2 & g3 & g1 & g1;
 
     oplist = graph2op(oplist, g7);
 
