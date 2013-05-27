@@ -13,7 +13,9 @@ enum optype_t
     AND,
     OR,
     NOT,
-    XOR
+    XOR,
+    SET,
+    CLR
 };
 
 class graph
@@ -33,8 +35,10 @@ class graph
         graph operator^ (graph x);
         graph operator~ ();
 
-
 };
+
+graph grSET();
+graph grCLR();
 
 struct operation_t
 {

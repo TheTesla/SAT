@@ -26,6 +26,9 @@ class logic_vector
         logic_vector operator^ (logic_vector x);
         logic_vector operator~ ();
         logic_vector operator== (logic_vector x);
+        logic_vector operator+ (logic_vector x);
+        logic_vector operator- (logic_vector x);
+        //logic_vector int2lv(signed value, unsigned length);
 
 };
 
@@ -97,22 +100,51 @@ logic_vector logic_vector::operator==(logic_vector x)
     return y;
 }
 
-
-struct node
+logic_vector logic_vector::operator+(logic_vector x)
 {
-    node* prev_node;
-};
-
-node addnode(node n)
-{
-    node* n1;
-    node* n2;
-    n1 = new node;
-    n2 = new node;
-    *n2 = n;
-    n1->prev_node = n2;
-    return *n1;
+    logic_vector y(gr_vec_n);
+    logic_vector co(gr_vec_n);
+    unsigned i;
+    y.gr_vec[0]  = gr_vec[0] ^ x.gr_vec[0];
+    co.gr_vec[0] = gr_vec[0] & x.gr_vec[0];
+    for(i=1;i<gr_vec_n;i++){
+        y.gr_vec[i] = gr_vec[i] ^ x.gr_vec[i] ^ co.gr_vec[i-1];
+        co.gr_vec[i]= gr_vec[i] & x.gr_vec[i] | x.gr_vec[i] & co.gr_vec[i-1] | gr_vec[i] & co.gr_vec[i-1];
+    }
+    return y;
 }
+
+logic_vector logic_vector::operator-(logic_vector x)
+{
+    logic_vector y(gr_vec_n);
+    logic_vector co(gr_vec_n);
+    unsigned i;
+    y.gr_vec[0]  = gr_vec[0] ^ x.gr_vec[0];
+    co.gr_vec[0] = gr_vec[0] ^ ~x.gr_vec[0];
+    for(i=1;i<gr_vec_n;i++){
+        y.gr_vec[i] = gr_vec[i] ^ ~x.gr_vec[i] ^ co.gr_vec[i-1];
+        co.gr_vec[i]= gr_vec[i] & ~x.gr_vec[i] | ~x.gr_vec[i] & co.gr_vec[i-1] | gr_vec[i] & co.gr_vec[i-1];
+    }
+    return y;
+}
+
+logic_vector int2lv(signed value, unsigned length)
+{
+    logic_vector y(length);
+
+    unsigned i;
+    for(i=0;i<length;i++){
+        if(value % 2) {
+            y.gr_vec[i] = grSET();
+        }
+        else{
+            y.gr_vec[i] = grCLR();
+        }
+        value = value >> 1;
+    }
+    return y;
+}
+
 
 int main()
 {
@@ -124,28 +156,22 @@ int main()
     graph g5, g6, g7, g;
 
 
-    node n1,n2,n3;
-
-    n1.prev_node = NULL;
-    n2 = addnode(n1);
-    n3 = addnode(n2);
-    cout << n3.prev_node << " " << n3.prev_node->prev_node << " " << n3.prev_node->prev_node->prev_node << endl;
 
 
 
-    logic_vector lv1(2), lv2(2), lv3(1), lv4(1), lv5(1);
+    logic_vector lv1(4), lv2(4), lv3(3), lv4(3), lv5(4), lv6(4), lv7(3), lv9(1);
 
     vector<operation_t> oplist;
 
 
-    lv3 = ~(lv2 & lv1);
-
-    lv4 = lv1 == lv2;
-    cout << lv4.gr_vec_n << " " << lv4.gr_vec_n << endl;
-    lv5 = lv4 == lv4;
+    lv5 = lv1 + lv2 + int2lv(2,4);
+    lv6 = lv2 + lv1 + int2lv(2,4);
+    //lv5 = int2lv(9,4) - int2lv(5,4);
+    //lv6 = int2lv(4,4);
+    lv9 = lv5 == lv6;
     //lv4 = lv3;
 
-    g7 = lv4.gr_vec[0] & lv5.gr_vec[0];
+    g7 = ~lv9.gr_vec[0];
 
 
     //g7 = g1 & g2 & g3 & g1 & g1;

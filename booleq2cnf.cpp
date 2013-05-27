@@ -11,7 +11,6 @@ graph::graph()
     operand2key = 0;
     Literal = 0;
     self = this;
-    cout << self << endl;
 }
 
 
@@ -66,8 +65,27 @@ graph graph::operator~()
     return *gr;
 }
 
+graph grSET()
+{
+    graph* gr;
+    gr = new graph;
+    gr->self = gr;
+    gr->operation = SET;
+    gr->operand1 = NULL;
+    gr->operand2 = NULL;
+    return *gr;
+}
 
-
+graph grCLR()
+{
+    graph* gr;
+    gr = new graph;
+    gr->self = gr;
+    gr->operation = CLR;
+    gr->operand1 = NULL;
+    gr->operand2 = NULL;
+    return *gr;
+}
 
 
 vector<operation_t> graph2op(vector<operation_t> oplist, graph& g)
@@ -232,6 +250,12 @@ CNF oplist2cnf(vector<operation_t> oplist)
         }
         if(NOT==oplist[x].op){
             oplist[x].g->Literal = cnf.inot(oplist[x].operand1ptr->Literal);
+        }
+        if(SET==oplist[x].op){
+            oplist[x].g->Literal = cnf.ione();
+        }
+        if(CLR==oplist[x].op){
+            oplist[x].g->Literal = cnf.izero();
         }
     }
 
